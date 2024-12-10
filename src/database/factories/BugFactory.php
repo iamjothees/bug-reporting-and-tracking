@@ -26,6 +26,7 @@ class BugFactory extends Factory
             'status' => $this->faker->randomElement(BugStatus::cases()),
             'reporter_id' => User::factory(),
             'assignee_id' => fake()->boolean(30) ? User::factory() : null,
+            'created_at' => fake()->dateTimeBetween('-1 year', 'now'),
         ];;
     }
 }

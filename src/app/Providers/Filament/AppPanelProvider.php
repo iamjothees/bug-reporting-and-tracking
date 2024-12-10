@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\BugSeverity;
 use App\Filament\Resources\BugResource\Pages\ListBugs;
+use App\Filament\Resources\BugResource\Widgets\BugsOverview;
 use BetterFuturesStudio\FilamentLocalLogins\LocalLogins;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -40,7 +41,9 @@ class AppPanelProvider extends PanelProvider
                 Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
-            ->widgets([])
+            ->widgets([
+                BugsOverview::class,
+            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
