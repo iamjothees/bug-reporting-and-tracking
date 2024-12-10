@@ -21,6 +21,7 @@ return new class extends Migration
             $table->foreignIdFor(User::class, 'reporter_id');
             $table->foreignIdFor(User::class, 'assignee_id')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

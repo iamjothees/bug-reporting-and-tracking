@@ -16,8 +16,7 @@ return new class extends Migration
         Schema::create('bug_histories', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Bug::class, 'bug_id');
-            $table->string('old_status');
-            $table->string('new_status');
+            $table->string('description');
             $table->foreignIdFor(User::class, 'updater_id');
             $table->timestamps();
         });

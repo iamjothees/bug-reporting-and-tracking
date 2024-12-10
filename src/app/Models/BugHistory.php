@@ -14,6 +14,6 @@ class BugHistory extends Model
     }
 
     public function updater(){
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'updater_id');
     }
 }

@@ -2,14 +2,17 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Resources\BugResource\Pages\ListBugs;
+use BetterFuturesStudio\FilamentLocalLogins\LocalLogins;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -50,6 +53,31 @@ class AppPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+            ])
+            ->plugin(new LocalLogins())
+            ->navigationGroups([
+                NavigationGroup::make()
+                 ->label('Bugs')
+                 ->icon('icon-bug')
+            ]
+            )
+            ->navigationItems([
+                NavigationItem::make('Critical Bugs')
+                    ->url(fn () => ListBugs::getUrl(['severity' => 'critical']))
+                    ->group('Bugs')
+                    ->sort(3),
+                NavigationItem::make('High Priority Bugs')
+                    ->url(fn () => ListBugs::getUrl(['severity' => 'high']))
+                    ->group('Bugs')
+                    ->sort(3),
+                NavigationItem::make('Medium Priority Bugs')
+                    ->url(fn () => ListBugs::getUrl(['severity' => 'medium']))
+                    ->group('Bugs')
+                    ->sort(3),
+                NavigationItem::make('Low Priority Bugs')
+                    ->url(fn () => ListBugs::getUrl(['severity' => 'low']))
+                    ->group('Bugs')
+                    ->sort(3),
             ]);
     }
 }

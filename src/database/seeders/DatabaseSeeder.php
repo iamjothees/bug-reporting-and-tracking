@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Bug;
 use App\Models\User;
 use App\UserRole;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -32,5 +33,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'developer@example.com',
             'password' => Hash::make('developer@123'),
         ]);
+
+        Bug::factory(10)->create();
     }
 }

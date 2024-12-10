@@ -6,10 +6,11 @@ use App\BugSeverity;
 use App\BugStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Bug extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $casts = [
         'severity' => BugSeverity::class,
@@ -28,7 +29,7 @@ class Bug extends Model
         return $this->belongsToMany(Tag::class);
     }
 
-    public function history(){
+    public function histories(){
         return $this->hasMany(BugHistory::class);
     }
 }
