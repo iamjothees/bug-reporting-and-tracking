@@ -50,6 +50,9 @@ class BugResource extends Resource
                 Forms\Components\Select::make('status')
                     ->options(BugStatus::class)
                     ->default(BugStatus::OPEN)
+                    ->disabled(
+                        fn ( ?Bug $bug ) => (!(Auth::user()->role === UserRole::ADMIN || $bug?->assignee?->id === Auth::user()->id))
+                    )
                     ->required(),
                 Forms\Components\Select::make('reporter_id')->label('Reporter')
                     ->visibleOn('create')
@@ -113,21 +116,45 @@ class BugResource extends Resource
 
     public static function infolist(Infolist $infolist): Infolist
     {
-        $assign = Action::make('Assign')
-            ->label(fn (Bug $bug) => !$bug->assignee_id ? "Assign" : "Re-assign")
-            ->form([
-                Forms\Components\Select::make('assignee_id')
-                    ->label(fn (Bug $bug) => !$bug->assignee_id ? "Assign to" : "Re-assign To")
-                    ->options(User::all()->where('role', UserRole::DEVELOPER)->pluck('name', 'id'))
-                    ->required(),
-            ])
-            ->action(function (array $data, Bug $bug) {
-                $bug->update([
-                    'assignee_id' => $data['assignee_id']
-                ]);
-                Notification::make('assignee-updated')->success()->title("Assignee updated")->send();
-            })
-            ->modalWidth('md');
+        $assign = match(Auth::user()->role){
+            UserRole::ADMIN => Action::make('Assign')
+                    ->label(fn (Bug $bug) => !$bug->assignee_id ? "Assign" : "Re-assign")
+                    ->form([
+                        Forms\Components\Select::make('assignee_id')
+                            ->label(fn (Bug $bug) => !$bug->assignee_id ? "Assign to" : "Re-assign To")
+                            ->options(User::all()->where('role', UserRole::DEVELOPER)->pluck('name', 'id'))
+                            ->required(),
+                    ])
+                    ->action(function (array $data, Bug $bug) {
+                        $bug->update([
+                            'assignee_id' => $data['assignee_id']
+                        ]);
+
+                        $assigneeName = User::find($data['assignee_id'])->name;
+                        $bug->histories()->create([
+                            'description' => "assigned to {$assigneeName}",
+                            'updater_id' => Auth::user()->id,
+                        ]);
+                        Notification::make('assignee-updated')->success()->title("Assigned this to {$assigneeName}")->send();
+                    })
+                    ->modalWidth('md'),
+            UserRole::DEVELOPER => Action::make('assign-to-me')
+                    ->label("Assign to Me")
+                    ->hidden(fn (Bug $bug) => $bug->assignee_id)
+                    ->action(function (Bug $bug) {
+                        $bug->update([
+                            'assignee_id' => Auth::user()->id
+                        ]);
+
+                        $bug->histories()->create([
+                            'description' => "assigned this to himself / herself",
+                            'updater_id' => Auth::user()->id,
+                        ]);
+                        Notification::make('assignee-updated')->success()->title("Assigned To Me")->send();
+                    })
+                    ->modalWidth('md'),
+            default =>  Action::make('Assign')->hidden(),
+        };
         return $infolist
                 ->schema([
                     Infolists\Components\TextEntry::make('reporter.name')

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\BugResource\Pages;
 use App\Filament\Resources\BugResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Facades\Auth;
 
 class EditBug extends EditRecord
 {
@@ -28,7 +29,7 @@ class EditBug extends EditRecord
             if ($key === 'updated_at' ) return;
             $this->record->histories()->create([
                 'description' => "changed $key to $value",
-                'updater_id' => auth()->id(),
+                'updater_id' => Auth::user()->id,
             ]);
         });
     }

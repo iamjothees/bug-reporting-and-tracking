@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\BugSeverity;
 use App\Filament\Resources\BugResource\Pages\ListBugs;
 use BetterFuturesStudio\FilamentLocalLogins\LocalLogins;
 use Filament\Http\Middleware\Authenticate;
@@ -58,26 +59,19 @@ class AppPanelProvider extends PanelProvider
             ->navigationGroups([
                 NavigationGroup::make()
                  ->label('Bugs')
-                 ->icon('icon-bug')
-            ]
-            )
-            ->navigationItems([
-                NavigationItem::make('Critical Bugs')
-                    ->url(fn () => ListBugs::getUrl(['severity' => 'critical']))
-                    ->group('Bugs')
-                    ->sort(3),
-                NavigationItem::make('High Priority Bugs')
-                    ->url(fn () => ListBugs::getUrl(['severity' => 'high']))
-                    ->group('Bugs')
-                    ->sort(3),
-                NavigationItem::make('Medium Priority Bugs')
-                    ->url(fn () => ListBugs::getUrl(['severity' => 'medium']))
-                    ->group('Bugs')
-                    ->sort(3),
-                NavigationItem::make('Low Priority Bugs')
-                    ->url(fn () => ListBugs::getUrl(['severity' => 'low']))
-                    ->group('Bugs')
-                    ->sort(3),
-            ]);
+                 ->icon('icon-bug'),
+            ])
+            ->navigationItems(
+                collect(BugSeverity::cases())->reverse()->values()
+                    ->map(
+                        fn ($severity, $index) => NavigationItem::make("{$severity->label()} Priority Bugs")
+                        ->url(fn () => ListBugs::getUrl(['severity' => $severity]))
+                        ->group('Bugs')
+                        ->sort($index)
+                        ->isActiveWhen(fn (): bool => request('severity') === $severity->value)
+                    )
+                    ->toArray()
+                ,
+            );
     }
 }
