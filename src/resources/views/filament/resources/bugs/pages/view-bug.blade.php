@@ -1,11 +1,13 @@
 <x-filament-panels::page>
+    <div class="flex flex-row-reverse">
+        <livewire:bug.histories :bug="$record" />
+    </div>
+
     @if ($this->hasInfolist())
         {{ $this->infolist }}
     @else
         {{ $this->form }}
     @endif
-
-    <livewire:bug.histories :bug="$record" />
  
     @if (count($relationManagers = $this->getRelationManagers()))
         <x-filament-panels::resources.relation-managers

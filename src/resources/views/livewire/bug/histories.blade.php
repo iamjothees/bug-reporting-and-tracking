@@ -1,4 +1,9 @@
-<x-filament::section>
+<x-filament::modal slide-over>
+    <x-slot name="trigger">
+        <x-filament::button color="warning" size="sm" outlined>
+            History
+        </x-filament::button>
+    </x-slot>
     <x-slot name="heading">
         History
     </x-slot>
@@ -9,4 +14,4 @@
             </li>
         @endforeach    
     </ul>
-</x-filament::section>
+</x-filament::modal>

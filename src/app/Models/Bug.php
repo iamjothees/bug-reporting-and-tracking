@@ -7,10 +7,11 @@ use App\BugStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Parallax\FilamentComments\Models\Traits\HasFilamentComments;
 
 class Bug extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, HasFilamentComments;
 
     protected $casts = [
         'severity' => BugSeverity::class,

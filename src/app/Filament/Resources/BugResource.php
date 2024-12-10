@@ -22,6 +22,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
+use Parallax\FilamentComments\Infolists\Components\CommentsEntry;
 
 class BugResource extends Resource
 {
@@ -196,6 +197,10 @@ class BugResource extends Resource
                     Infolists\Components\TextEntry::make('description')
                         ->label('Description')
                         ->columnSpanFull(),
+                    
+                    CommentsEntry::make('filament_comments')
+                        ->columnSpanFull()
+                        ->extraAttributes(['class' => 'mt-4']),
                     
                 ]);
     }
